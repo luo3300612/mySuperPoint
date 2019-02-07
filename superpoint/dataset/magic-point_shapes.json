@@ -15,9 +15,9 @@
   "num_parallel_calls": 10,
   "generation": {
     "split_sizes": {
-      "training": 100,
-      "validation": 2,
-      "test": 5
+      "training": 10000,
+      "validation": 200,
+      "test": 500
     },
     "image_size": [
       960,

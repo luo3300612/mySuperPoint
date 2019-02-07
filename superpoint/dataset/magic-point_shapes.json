@@ -1,0 +1,134 @@
+{
+  "basedir" : "/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/dataset/data",
+  "primitives": "all",
+  "truncate": {
+    "draw_ellipses": 0.3,
+    "draw_stripes": 0.2,
+    "gaussian_noise": 0.1
+  },
+  "validation_size": 500,
+  "test_size": -1,
+  "on-the-fly": false,
+  "cache_in_memory": true,
+  "suffix": "v6",
+  "add_augmentation_to_test_set": false,
+  "num_parallel_calls": 10,
+  "generation": {
+    "split_sizes": {
+      "training": 100,
+      "validation": 2,
+      "test": 5
+    },
+    "image_size": [
+      960,
+      1280
+    ],
+    "random_seed": 0,
+    "params": {
+      "generate_background": {
+        "min_kernel_size": 150,
+        "max_kernel_size": 500,
+        "min_rad_ratio": 0.02,
+        "max_rad_ratio": 0.031
+      },
+      "draw_stripes": {
+        "transform_params": [
+          0.1,
+          0.1
+        ]
+      },
+      "draw_multiple_polygons": {
+        "kernel_boundaries": [
+          50,
+          100
+        ]
+      }
+    }
+  },
+  "preprocessing": {
+    "resize": [
+      120,
+      160
+    ],
+    "blur_size": 21
+  },
+  "augmentation": {
+    "photometric": {
+      "enable": true,
+      "primitives": [
+        "random_brightness",
+        "random_contrast",
+        "additive_speckle_noise",
+        "additive_gaussian_noise",
+        "additive_shade",
+        "motion_blur"
+      ],
+      "params": {
+        "random_brightness": {
+          "max_abs_change": 75
+        },
+        "random_contrast": {
+          "strength_range": [
+            0.3,
+            1.8
+          ]
+        },
+        "additive_gaussian_noise": {
+          "stddev_range": [
+            0,
+            15
+          ]
+        },
+        "additive_speckle_noise": {
+          "prob_range": [
+            0,
+            0.0035
+          ]
+        },
+        "additive_shade": {
+          "transparency_range": [
+            -0.5,
+            0.8
+          ],
+          "kernel_size_range": [
+            50,
+            100
+          ]
+        },
+        "motion_blur": {
+          "max_kernel_size": 7
+        }
+      },
+      "random_order": true
+    },
+    "homographic": {
+      "enable": true,
+      "params": {
+        "translation": true,
+        "rotation": true,
+        "scaling": true,
+        "perspective": true,
+        "scaling_amplitude": 0.2,
+        "perspective_amplitude_x": 0.2,
+        "perspective_amplitude_y": 0.2,
+        "patch_ratio": 0.8,
+        "max_angle": 1.57,
+        "allow_artifacts": true,
+        "translation_overflow": 0.05
+      },
+      "valid_border_margin": 2
+    }
+  },
+  "drawing_primitives": [
+    "draw_lines",
+    "draw_polygon",
+    "draw_multiple_polygons",
+    "draw_ellipses",
+    "draw_star",
+    "draw_checkerboard",
+    "draw_stripes",
+    "draw_cube",
+    "gaussian_noise"
+  ],
+  "name": "synthetic_shapes"
+}

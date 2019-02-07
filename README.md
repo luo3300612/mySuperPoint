@@ -18,6 +18,21 @@
 |gaussian noise|?|噪声|
 其中，每类包含训练集10000，测试集500，验证集200
 
+训练
+```shell
+python experiment.py train configs/magic-point_shapes.yaml magic-point_synth
+```
+第一个参数是指定进行训练，第二个参数是配置文件目录
+
+第一次训练时，会自动生成数据集
+
+experience.py(line 150) - > _cli_train(line 81) 
+-> train(line 19) -> _init_graph(line63)
+-> get_dataset -> datasets/__init__.py 返回SyntheticShapes(**config['data'])，
+SyntheticShape的__init__方法会合并类自带的default_config和config['data']这两个字典作为
+最后的config，然后调用_init_dataset和_get_data生成数据集,其中_init_dataset负责划分文件目录，
+然后用dump_primitive_data来预处理图片
+
 #### TODO
 * 浏览数据集，记下笔记
 * 测试数据集生成方法

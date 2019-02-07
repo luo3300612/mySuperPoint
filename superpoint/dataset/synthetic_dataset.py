@@ -696,8 +696,8 @@ def draw_interest_points(img, points):
 
 if __name__ == '__main__':
     c = 0
-    while c!=113:
-        img = np.zeros((400, 500,3), dtype=np.uint8)
+    while c != 113:
+        img = np.zeros((400, 500, 3), dtype=np.uint8)
         points = draw_stripes(img)
         print(points)
         for point in points:

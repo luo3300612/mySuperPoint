@@ -3,7 +3,7 @@ import numpy as np
 import os
 import random
 
-path_to_dataset = "/home/luo3300612/Workspace/PycharmWS/SuperPoint/data/synthetic_shapes_v6"
+path_to_dataset = "/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/dataset/data"
 
 dir_image = "images"
 dir_point = "points"

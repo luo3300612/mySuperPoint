@@ -1,8 +1,6 @@
 # mySuperPoint
-## log
-### 2019-02-01
 在[Superpoint](https://github.com/rpautrat/SuperPoint)中寻找Synthetic dataset的生成方法
-#### 生成数据集笔记
+## 生成数据集笔记
 生成的数据集有9类，分别是
 
 | 类别 | 每张图的个数 | 备注 |
@@ -33,6 +31,12 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 最后的config，然后调用_init_dataset和_get_data生成数据集,其中_init_dataset负责划分文件目录，
 然后用dump_primitive_data来预处理图片
 
+## MagicPoint结构
+原文
+* We use the detector pathway of the SuperPoint architecture(ignoring the descriptor head)
+and train it on Synthetic Shapes
+* The MagicPoint architecture is the SuperPoint architecture without the descriptor head
+MagicPoint实际上就是SuperPoint没有生成descriptor那部分的结构
 #### TODO
 * 浏览数据集，记下笔记
 * 测试数据集生成方法
@@ -46,4 +50,5 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 * [demoasd](https://www.youtube.com/watch?v=gtzxuET74Mk) ,youtube上的视频Demo，在高分辨率的情况下似乎有很大的问题
 
 ## 问题
-* 圆心是否算是关键点
+* 圆心是否算是关键点：不算，在ppt和参考的tf复现中都不算关键点
+* descriptor head 是啥

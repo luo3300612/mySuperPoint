@@ -1,22 +1,8 @@
 # mySuperPoint
-在[Superpoint](https://github.com/rpautrat/SuperPoint)中寻找Synthetic dataset的生成方法
-## 生成数据集笔记
-生成的数据集有9类，分别是
+数据集生成方法是在[Superpoint](https://github.com/rpautrat/SuperPoint)中Synthetic dataset的生成方法
 
-| 类别 | 每张图的个数 | 备注 |
-| ------ |: ------ :| ------ |
-|  checkerboard | 1 | |
-| cube |1||
-| ellipse| 多||
-| line| 多||
-| multiple polygon |多||
-|polygon |1|多为三角形|
-|star |1|实际不是星星，是线段交成的结形
-|stripes| 多||
-|gaussian noise|?|噪声|
-其中，每类包含训练集10000，测试集500，验证集200
-共有9类
-所有图片的大小为120*160
+## tf版实现笔记
+* 网络结构与pytorch版一样
 
 训练
 ```shell
@@ -33,20 +19,18 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 最后的config，然后调用_init_dataset和_get_data生成数据集,其中_init_dataset负责划分文件目录，
 然后用dump_primitive_data来预处理图片
 
-## MagicPoint结构
-原文
-* We use the detector pathway of the SuperPoint architecture(ignoring the descriptor head)
-and train it on Synthetic Shapes
-* The MagicPoint architecture is the SuperPoint architecture without the descriptor head
-MagicPoint实际上就是SuperPoint没有生成descriptor那部分的结构
 #### TODO
-* 浏览数据集，记下笔记
-* 测试数据集生成方法
-* 找到原数据集生成的代码
+* 浏览数据集，记下笔记 done
+* 测试数据集生成方法 done
+* 找到原数据集生成的代码 done
 * 根据实际场景，结合Opencv函数，找到扩展数据集的方法
-* 需要有label生成前后的对比
+* 需要有label生成前后的对比 done
 * 加上TensorboardX可视化训练过程
 * 正负样本差太多导致网络倾向全部判定为无关键点
+* 即便可能关键点的激活值很小，也可以保留topk个作为参考
+* pixel shuffle in pytorch
+* pretrained model的置信度的门限值竟然是0.015,tensroflow版的置信度门限是0.001
+* 借鉴tf实现中的使用argmax来做label生成？
 
 ## Reference
 * [Superpoint](https://github.com/rpautrat/SuperPoint)，基于tensorflow的SuperPoint
@@ -54,6 +38,3 @@ MagicPoint实际上就是SuperPoint没有生成descriptor那部分的结构
 作者预训练的SuperPoint模型，可以调用到图片、视频和摄像头上，但作者明确说明不会开放训练代码、合成数据集
 * [demoasd](https://www.youtube.com/watch?v=gtzxuET74Mk) ,youtube上的视频Demo，在高分辨率的情况下似乎有很大的问题
 * [关于损失函数](https://zhuanlan.zhihu.com/p/54969632)
-## 问题
-* 圆心是否算是关键点：不算，在ppt和参考的tf复现中都不算关键点,圆是反例
-* descriptor head 是啥*__*

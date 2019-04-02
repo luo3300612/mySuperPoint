@@ -1,5 +1,13 @@
 import torch
-from tensorboardX import SummaryWriter
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset,DataLoader
+import matplotlib.pyplot as plt
+import pandas as pd
+import os
+from tqdm import tqdm
+import numpy as np
+import random
 
 
 class SuperPointNet(torch.nn.Module):
@@ -52,15 +60,9 @@ class SuperPointNet(torch.nn.Module):
         cPa = self.relu(self.convPa(x))
         semi = self.convPb(cPa)
         # Descriptor Head.
-        cDa = self.relu(self.convDa(x))
-        desc = self.convDb(cDa)
-        dn = torch.norm(desc, p=2, dim=1)  # Compute the norm.
-        desc = desc.div(torch.unsqueeze(dn, 1))  # Divide by norm to normalize.
-        return semi, desc
+#         cDa = self.relu(self.convDa(x))
+#         desc = self.convDb(cDa)
+#         dn = torch.norm(desc, p=2, dim=1)  # Compute the norm.
+#         desc = desc.div(torch.unsqueeze(dn, 1))  # Divide by norm to normalize.
+        return semi #, desc
 
-dummy_input = torch.rand(10, 1, 28, 28)
-
-net = SuperPointNet()
-
-with SummaryWriter(comment='Net1') as w:
-    w.add_graph(net, dummy_input)

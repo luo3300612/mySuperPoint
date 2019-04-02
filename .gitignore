@@ -2,3 +2,4 @@ env
 superpoint/dataset/data
 .idea/
 superpoint/dataset/__pycache__/
+superpoint/model/__pycache__/

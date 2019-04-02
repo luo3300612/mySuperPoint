@@ -15,6 +15,8 @@
 |stripes| 多||
 |gaussian noise|?|噪声|
 其中，每类包含训练集10000，测试集500，验证集200
+共有9类
+所有图片的大小为120*160
 
 训练
 ```shell
@@ -42,13 +44,16 @@ MagicPoint实际上就是SuperPoint没有生成descriptor那部分的结构
 * 测试数据集生成方法
 * 找到原数据集生成的代码
 * 根据实际场景，结合Opencv函数，找到扩展数据集的方法
+* 需要有label生成前后的对比
+* 加上TensorboardX可视化训练过程
+* 正负样本差太多导致网络倾向全部判定为无关键点
 
 ## Reference
 * [Superpoint](https://github.com/rpautrat/SuperPoint)，基于tensorflow的SuperPoint
 * [SuperpointPretrainedNetwork](https://github.com/MagicLeapResearch/SuperPointPretrainedNetwork)，
 作者预训练的SuperPoint模型，可以调用到图片、视频和摄像头上，但作者明确说明不会开放训练代码、合成数据集
 * [demoasd](https://www.youtube.com/watch?v=gtzxuET74Mk) ,youtube上的视频Demo，在高分辨率的情况下似乎有很大的问题
-
+* [关于损失函数](https://zhuanlan.zhihu.com/p/54969632)
 ## 问题
-* 圆心是否算是关键点：不算，在ppt和参考的tf复现中都不算关键点
-* descriptor head 是啥
+* 圆心是否算是关键点：不算，在ppt和参考的tf复现中都不算关键点,圆是反例
+* descriptor head 是啥*__*

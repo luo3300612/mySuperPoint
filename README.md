@@ -19,6 +19,9 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 最后的config，然后调用_init_dataset和_get_data生成数据集,其中_init_dataset负责划分文件目录，
 然后用dump_primitive_data来预处理图片
 
+* bn层竟然放在激活函数的后面，但是网上说放在激活层后面效果也不错？
+* tf实现版本有batch normalization
+
 #### TODO
 * 浏览数据集，记下笔记 done
 * 测试数据集生成方法 done
@@ -29,8 +32,11 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 * 正负样本差太多导致网络倾向全部判定为无关键点
 * 即便可能关键点的激活值很小，也可以保留topk个作为参考
 * pixel shuffle in pytorch
-* pretrained model的置信度的门限值竟然是0.015,tensroflow版的置信度门限是0.001
+* pretrained model的置信度的门限值竟然是0.015,tensroflow版的置信度门限是0.001,或许门限设低一点可以解决问题？
+* 并不行，检测出的图片兴趣点分布在边框上？发现pretrained model有一个去除边框上一定范围内的点的操作，为什么？
 * 借鉴tf实现中的使用argmax来做label生成？
+* tf版本
+* 调查pretrained model的输出scale的范围
 
 ## Reference
 * [Superpoint](https://github.com/rpautrat/SuperPoint)，基于tensorflow的SuperPoint

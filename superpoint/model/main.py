@@ -14,7 +14,7 @@ from magic_point import SuperPointNet
 from tensorboardX import SummaryWriter
 
 
-def output2points(output, alpha=0.5):
+def output2points(output, alpha=0.0015):
     output = np.exp(output.detach().numpy())  # Softmax.
     output = output / (np.sum(output, axis=0) + .00001)  # Should sum to 1.
     output = output[:-1, :, :]
@@ -27,9 +27,10 @@ def output2points(output, alpha=0.5):
     xs, ys = np.where(output > alpha)
 
     points = np.vstack((xs, ys)).T
-    if len(points) == 0:
-        print(f'there are {len(points)} points')
-        print(f"max output value is {np.max(output)}")
+    # if len(points) == 0:
+    print(f'there are {len(points)} points')
+    print(f"max output value is {np.max(output)}")
+    print(f"min output value is {np.min(output)}")
     return points
 
 
@@ -63,9 +64,9 @@ test_loader = DataLoader(test_data,
 
 net = SuperPointNet()
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(params=net.parameters(), lr=0.01)
+optimizer = optim.SGD(params=net.parameters(), lr=0.001,momentum=0.9)
 
-n_epoch = 10
+n_epoch = 100
 running_loss = 0.0
 
 last_test_loss = 999999
@@ -100,10 +101,12 @@ for epoch in range(n_epoch):
         output = outputs[i]
         img = np.squeeze(img)
         points = output2points(output)
+        plt.figure()
         plt.imshow(img)
         plt.axis("off")
         plt.scatter(points[:, 1], points[:, 0])
-        plt.savefig(f'sample_output/sample_output{i}.png')
+        plt.savefig(f'sample_output/sample_output_epoch{epoch}_{i}.png')
+        plt.close('all')
         print('save sample to ./sample_output/sample_output*.png')
 
     save_path = os.path.join(model_save_path, f"epoch{epoch}")

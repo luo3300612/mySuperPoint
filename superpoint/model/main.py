@@ -14,7 +14,7 @@ from magic_point import SuperPointNet
 from tensorboardX import SummaryWriter
 
 
-def output2points(output, alpha=0.0015):
+def output2points(output, alpha=0.001):
     output = np.exp(output.detach().numpy())  # Softmax.
     output = output / (np.sum(output, axis=0) + .00001)  # Should sum to 1.
     output = output[:-1, :, :]
@@ -49,7 +49,7 @@ val_csv = '/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/model/va
 
 model_save_path = '/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/model/result'
 
-batch_size = 16
+batch_size = 64
 
 train_data = SyntheticData(val_csv, dataset_root)
 train_loader = DataLoader(train_data,
@@ -64,9 +64,9 @@ test_loader = DataLoader(test_data,
 
 net = SuperPointNet()
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(params=net.parameters(), lr=0.001,momentum=0.9)
+optimizer = optim.SGD(params=net.parameters(), lr=0.001)
 
-n_epoch = 100
+n_epoch = 200000
 running_loss = 0.0
 
 last_test_loss = 999999
@@ -89,29 +89,28 @@ for epoch in range(n_epoch):
         optimizer.step()
         running_loss += loss.data
 
-        if i % 10 == 9:
-            count += 1
-            print(f"epoch:{epoch + 1},batch:{i + 1},AVG.loss:{running_loss / batch_size / 10}")
-            writer.add_scalar('data/running_loss', running_loss, count)
-            running_loss = 0.0
+    print(f"epoch:{epoch + 1},AVG.loss:{running_loss / len(train_data)*batch_size}")
+    writer.add_scalar('data/running_loss', running_loss, epoch)
+    running_loss = 0.0
 
-    # sample image
-    for i in range(8):
-        img = imgs[i].detach().numpy()
-        output = outputs[i]
-        img = np.squeeze(img)
-        points = output2points(output)
-        plt.figure()
-        plt.imshow(img)
-        plt.axis("off")
-        plt.scatter(points[:, 1], points[:, 0])
-        plt.savefig(f'sample_output/sample_output_epoch{epoch}_{i}.png')
-        plt.close('all')
-        print('save sample to ./sample_output/sample_output*.png')
+    if epoch % 5 == 0:
+        # sample image
+        for i in range(8):
+            img = imgs[i].detach().numpy()
+            output = outputs[i]
+            img = np.squeeze(img)
+            points = output2points(output)
+            plt.figure()
+            plt.imshow(img)
+            plt.axis("off")
+            plt.scatter(points[:, 1], points[:, 0])
+            plt.savefig(f'sample_output/sample_output_epoch{epoch}_{i}.png')
+            plt.close('all')
+            print('save sample to ./sample_output/sample_output*.png')
 
-    save_path = os.path.join(model_save_path, f"epoch{epoch}")
-    torch.save(net, save_path)
-    print(f"save model to {save_path}")
+        save_path = os.path.join(model_save_path, f"epoch{epoch}")
+        torch.save(net, save_path)
+        print(f"save model to {save_path}")
 
     # calculate test loss
     # test_loss = 0.0

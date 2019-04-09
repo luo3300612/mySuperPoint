@@ -51,7 +51,9 @@ model_save_path = '/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/
 
 batch_size = 64
 
-train_data = SyntheticData(val_csv, dataset_root)
+print("loading data...")
+
+train_data = SyntheticData(train_csv, dataset_root)
 train_loader = DataLoader(train_data,
                           batch_size=batch_size,
                           shuffle=True,
@@ -61,10 +63,13 @@ test_loader = DataLoader(test_data,
                          batch_size=batch_size,
                          shuffle=True,
                          num_workers=4)
-
+print("done")
+print("loading model...")
 net = SuperPointNet()
+print("done")
+print(net)
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(params=net.parameters(), lr=0.001)
+optimizer = optim.SGD(params=net.parameters(), lr=0.0001)
 
 n_epoch = 200000
 running_loss = 0.0
@@ -72,7 +77,8 @@ running_loss = 0.0
 last_test_loss = 999999
 
 net.train()
-count = 0
+iter_num = 0
+print("start training")
 for epoch in range(n_epoch):
     for i, sample in enumerate(train_loader):
         imgs = sample['img'].view((-1, 1, H, W))
@@ -89,9 +95,11 @@ for epoch in range(n_epoch):
         optimizer.step()
         running_loss += loss.data
 
-    print(f"epoch:{epoch + 1},AVG.loss:{running_loss / len(train_data)*batch_size}")
-    writer.add_scalar('data/running_loss', running_loss, epoch)
-    running_loss = 0.0
+        if i % 10 == 9:
+            iter_num += 1
+            print(f"epoch:{epoch + 1},batch:{i + 1},AVG.loss:{running_loss / 10}")
+            writer.add_scalar('data/running_loss', running_loss, iter_num)
+            running_loss = 0.0
 
     if epoch % 5 == 0:
         # sample image

@@ -13,3 +13,8 @@ writer.close()
 #
 # img = cv2.imread('/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/dataset/data/draw_checkerboard/images/test/5.png',0)
 # print(img.shape)
+
+
+import numpy as np
+
+a = np.array

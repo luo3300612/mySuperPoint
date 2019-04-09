@@ -24,6 +24,8 @@ second_pts_dir_name = 'points'
 
 dataset_dir_name = {'train': 'training', 'test': 'test', 'val': 'validation'}
 
+H = Config.H
+W = Config.W
 Hc = Config.Hc
 Wc = Config.Wc
 
@@ -93,19 +95,16 @@ class SyntheticData(Dataset):
 
 
 def point2label(pts):
-    label = 64 * np.ones((Hc, Wc), dtype=int)
-    for pt in pts:
-        i = int(pt[0]) // 8
-        j = int(pt[1]) // 8
-        k = int(pt[0]) % 8
-        l = int(pt[1]) % 8
-        if label[i, j] == 64:
-            label[i, j] = int(k * 8 + l)
-            # print(pt,'->',f'label[{i},{j}]={label[i,j]}')
-        else:
-            if random.randint(1, 2) == 1:
-                label[i, j] = k * 8 + l
-                # print(pt,'->',f'label[{i},{j}]={label[i,j]}','recover')
+    label = np.zeros((H, W), dtype=int)
+    pts = pts.astype(int)
+    #     print(pts)
+    #     print(pts.shape)
+    label[pts[:, 0], pts[:, 1]] = 1
+    label = label.reshape((Hc, 8, Wc, 8))
+    label = label.transpose((0, 2, 1, 3))
+    label = label.reshape((Hc, Wc, 64))
+    label = np.concatenate((2 * label, np.ones((Hc, Wc, 1), dtype=int)), axis=2)
+    label = np.argmax(label, axis=2)
     return label
 
 
@@ -135,7 +134,6 @@ def visulize(img, label=None, pt=None):
     if pt is not None and len(pt) != 0:
         plt.scatter(pt[:, 1], pt[:, 0])
     plt.show()
-
 
 # if __name__ == '__main__':
 #     gen_csv()

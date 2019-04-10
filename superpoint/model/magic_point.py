@@ -75,8 +75,8 @@ class SuperPointNet(torch.nn.Module):
         x = self.bn4b(x)
 
         # Detector Head.
-        cPa = self.relu(self.convPa(x))
-        semi = self.convPb(cPa)
+        cPa = self.bnPa(self.relu(self.convPa(x)))
+        semi = self.bnPb(self.convPb(cPa))
         # Descriptor Head.
         #         cDa = self.relu(self.convDa(x))
         #         desc = self.convDb(cDa)

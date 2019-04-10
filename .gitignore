@@ -6,3 +6,7 @@ superpoint/model/__pycache__/
 superpoint/model/result/
 superpoint/model/sample_output/
 superpoint/model/runs/
+superpoint/runs/
+superpoint/model/.ipynb_checkpoints/
+superpoint/model/__pycache__/*
+superpoint/result

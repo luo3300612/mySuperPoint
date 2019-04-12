@@ -41,7 +41,7 @@ def train(model, device, train_loader, optimizer, epoch):
         running_loss += loss.item()
 
     log.logger.info(f"epoch:{epoch + 1},AVG.loss:{running_loss / 1000}")
-    writer.add_scalar('data/running_loss', running_loss, epoch + 1)
+    writer.add_scalar('data/running_loss', running_loss/1000, epoch + 1)
 
     # save model
     save_path = os.path.join(model_save_path, f"epoch{epoch + 1}")
@@ -60,7 +60,7 @@ def test(model, device, test_loader):
             loss = criterion(outputs, labels)
             test_loss += loss.item() * imgs.shape[0]
         log.logger.info(f"AVG. test loss:{test_loss / len(test_data)}")
-    writer.add_scalar('data/test_loss', test_loss, epoch)
+    writer.add_scalar('data/test_loss', test_loss/len(test_data), epoch)
 
 
 if __name__ == '__main__':

@@ -60,7 +60,7 @@ def test(model, device, test_loader):
             loss = criterion(outputs, labels)
             test_loss += loss.item() * imgs.shape[0]
         log.logger.info(f"AVG. test loss:{test_loss / len(test_data)}")
-    writer.add_scalar('data/test_loss', test_loss/len(test_data), epoch)
+    writer.add_scalar('data/test_loss', test_loss/len(test_data), epoch+1)
 
 
 if __name__ == '__main__':

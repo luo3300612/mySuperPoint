@@ -119,7 +119,7 @@ def label2point(label):
     return np.array(ret)
 
 
-def visulize(img, label=None, pt=None):
+def visulize(img, label=None, pt=None,pts_color='b'):
     img = img.squeeze()
     plt.imshow(img, cmap='gray')
     plt.axis('off')
@@ -132,7 +132,7 @@ def visulize(img, label=None, pt=None):
                 k, l = label[i, j] // 8, int(label[i, j]) % 8
                 plt.gca().add_patch(plt.Rectangle((y, x), 8, 8, color='r', fill=False, linewidth=2))
     if pt is not None and len(pt) != 0:
-        plt.scatter(pt[:, 1], pt[:, 0])
+        plt.scatter(pt[:, 1], pt[:, 0],color=pts_color)
     plt.show()
 
 # if __name__ == '__main__':

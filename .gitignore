@@ -10,3 +10,4 @@ superpoint/runs/
 superpoint/model/.ipynb_checkpoints/
 superpoint/model/__pycache__/*
 superpoint/result
+superpoint/ipy_notebook/*

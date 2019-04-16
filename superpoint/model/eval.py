@@ -9,12 +9,15 @@ from datetime import datetime
 from tqdm import tqdm
 from multiprocessing import Pool
 import os, time, random
+from tensorboardX import SummaryWriter
 
 
 # epoch17 nms_dist=4,conf_thresh=0.001,border_remove=0 ===> p=0.6584 r = 0.6922
-# epoch17 nms_dist=4,conf_thresh=1/65,border_remove=0 ===> p=0.7251 r = 0.7065 144s
+# epoch17 nms_dist=4,conf_thresh=1/65,border_remove=0 ===> p=0.7251 r = 0.7065
 # epoch 40 ===> p 0.7479 r 0.7452
 # epoch 80 ===> p 0.7995 r 0.7865
+
+# numworker=1 144s
 # numworker=2 105s
 
 
@@ -50,36 +53,48 @@ def eval(name, start, end):
 
 
 if __name__ == '__main__':
-    print('Parent process %s.' % os.getpid())
 
-    fe = SuperPointFrontend(weights_path='/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/result/epoch92',
-                            nms_dist=4,
-                            conf_thresh=1 / 65,
-                            border_remove=0)
+    to_eval = range(0, 93)
+    writer = SummaryWriter(log_dir="./eval")
+    num_worker = 1
 
-    config = {"SyntheticData": {"only_point": True}}
+    for model_i in to_eval:
+        print('Parent process %s.' % os.getpid())
 
-    test_data = get_test(config, loader=False)
+        fe = SuperPointFrontend(
+            weights_path=f'/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/result/epoch{model_i+1}',
+            nms_dist=4,
+            conf_thresh=1 / 65,
+            border_remove=0)
 
-    num_worker = 2
-    interval = np.linspace(0, len(test_data), num_worker + 1, endpoint=True, dtype=int)
+        config = {"SyntheticData": {"only_point": True}}
+        test_data = get_test(config, loader=False)
 
-    st = datetime.now()
-    p = Pool(num_worker)
-    results = [p.apply_async(eval, args=(i, interval[i], interval[i + 1])) for i in range(num_worker)]
-    # precision_sum += result[0]
-    # recall_sum += result[1]
-    print('Waiting for all subprocesses done...')
-    p.close()
-    p.join()
-    print('All subprocesses done.')
+        st = datetime.now()
+        if num_worker > 1:  # use multiprocess
+            interval = np.linspace(0, len(test_data), num_worker + 1, endpoint=True, dtype=int)
 
-    avg_precision = sum([item.get()[0] for item in results]) / len(test_data)
-    avg_recall = sum([item.get()[1] for item in results]) / len(test_data)
+            p = Pool(num_worker)
+            results = [p.apply_async(eval, args=(i, interval[i], interval[i + 1])) for i in range(num_worker)]
+            print('Waiting for all subprocesses done...')
+            p.close()
+            p.join()
+            print('All subprocesses done.')
 
-    ed = datetime.now()
-    timedelta = (ed - st).seconds
+            avg_precision = sum([item.get()[0] for item in results]) / len(test_data)
+            avg_recall = sum([item.get()[1] for item in results]) / len(test_data)
+        else:
+            precision_sum, recall_sum = eval(1, 0, len(test_data))
+            avg_precision = precision_sum / len(test_data)
+            avg_recall = recall_sum / len(test_data)
 
-    print(f"avg_precision:{avg_precision:.4f}")
-    print(f"avg_recall:{avg_recall:.4f}")
-    print(f"{timedelta} seconds")
+        ed = datetime.now()
+        timedelta = (ed - st).seconds
+
+        print(f"avg_precision:{avg_precision:.4f}")
+        print(f"avg_recall:{avg_recall:.4f}")
+        print(f"{timedelta} seconds")
+        writer.add_scalar("eval/precision", avg_precision, model_i)
+        writer.add_scalar("eval/recall", avg_recall, model_i)
+
+    writer.close()

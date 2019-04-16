@@ -40,7 +40,9 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 * 每轮的输出加上准确率和召回率
 * nms是干啥的
 * 加上在relu后的batch normalization
-* 迅速的过拟合是否表面需要给网络做正则化？
+* 迅速的过拟合是否表明需要给网络做正则化？
+* 奇怪的现象，即便test_loss变大了，但是precision和recall竟然也变大
+* 记录multiprocess的用法
 
 ## 坑
 直接将(H,W)reshape成(Hc,Wc,64)和先将(H,W)reshape成(Hc,8,Wc,8)然后transpose成(Hc,Wc,8,8)再reshape成(Hc,Wc,64)是不一样的结果

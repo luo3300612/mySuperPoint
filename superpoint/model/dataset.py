@@ -73,10 +73,11 @@ def gen_csv():
 
 
 class SyntheticData(Dataset):
-    def __init__(self, csv_file, dataset_root, save_point=False):
+    def __init__(self, csv_file, dataset_root, save_point=False, only_point=False):
         self.csv = pd.read_csv(csv_file)
         self.dataset_root = dataset_root
         self.save_point = save_point
+        self.only_point = only_point
 
     def __len__(self):
         return len(self.csv)
@@ -87,19 +88,23 @@ class SyntheticData(Dataset):
         pt_path = os.path.join(self.dataset_root, item['pts_path'])
         img = plt.imread(img_path)
         pt = np.load(pt_path)
-        if self.save_point:
+        if self.only_point:
+            sample = {'img': img, 'pt': pt}
+        elif self.save_point:
             sample = {'img': img, 'label': point2label(pt), 'pt': pt}
         else:
             sample = {'img': img, 'label': point2label(pt)}
         return sample
 
 
-def point2label(pts):
+def point2label(pts, binary=False):
     label = np.zeros((H, W), dtype=int)
     pts = pts.astype(int)
     #     print(pts)
     #     print(pts.shape)
     label[pts[:, 0], pts[:, 1]] = 1
+    if binary:
+        return label
     label = label.reshape((Hc, 8, Wc, 8))
     label = label.transpose((0, 2, 1, 3))
     label = label.reshape((Hc, Wc, 64))
@@ -119,7 +124,7 @@ def label2point(label):
     return np.array(ret)
 
 
-def visulize(img, label=None, pt=None,pts_color='b'):
+def visulize(img, label=None, pt=None, pts_color='b'):
     img = img.squeeze()
     plt.imshow(img, cmap='gray')
     plt.axis('off')
@@ -132,7 +137,12 @@ def visulize(img, label=None, pt=None,pts_color='b'):
                 k, l = label[i, j] // 8, int(label[i, j]) % 8
                 plt.gca().add_patch(plt.Rectangle((y, x), 8, 8, color='r', fill=False, linewidth=2))
     if pt is not None and len(pt) != 0:
-        plt.scatter(pt[:, 1], pt[:, 0],color=pts_color)
+        try:
+            assert pt.shape[1] == 2
+        except AssertionError as err:
+            print("Dim of pts not correct")
+            raise
+        plt.scatter(pt[:, 1], pt[:, 0], color=pts_color)
     plt.show()
 
 # if __name__ == '__main__':

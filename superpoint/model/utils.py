@@ -32,14 +32,14 @@ def output2points(output, alpha=0.001):
 class SuperPointFrontend(object):
     """ Wrapper around pytorch net to help with pre and post image processing. """
 
-    def __init__(self, weights_path, nms_dist, conf_thresh,
+    def __init__(self, weights_path, nms_dist, conf_thresh,border_remove=4,
                  cuda=False):
         self.name = 'SuperPoint'
         self.cuda = cuda
         self.nms_dist = nms_dist
         self.conf_thresh = conf_thresh
         self.cell = 8  # Size of each output cell. Keep this fixed.
-        self.border_remove = 4  # Remove points this close to the border.
+        self.border_remove = border_remove  # Remove points this close to the border.
 
         # Load the network in inference mode.
         self.net = SuperPointNet()

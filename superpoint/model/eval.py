@@ -15,6 +15,8 @@ from tensorboardX import SummaryWriter
 # epoch17 nms_dist=4,conf_thresh=0.001,border_remove=0 ===> p=0.6584 r = 0.6922
 # epoch17 nms_dist=4,conf_thresh=1/65,border_remove=0 ===> p=0.7251 r = 0.7065
 # epoch 40 ===> p 0.7479 r 0.7452
+# epoch 72 ===> p 0.7959 r 0.789
+# epoch 74 ===> p 0.7981 r 0.7869
 # epoch 80 ===> p 0.7995 r 0.7865
 
 # numworker=1 144s

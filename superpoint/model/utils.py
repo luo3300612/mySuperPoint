@@ -32,7 +32,7 @@ def output2points(output, alpha=0.001):
 class SuperPointFrontend(object):
     """ Wrapper around pytorch net to help with pre and post image processing. """
 
-    def __init__(self, weights_path, nms_dist, conf_thresh,border_remove=4,
+    def __init__(self, weights_path, nms_dist, conf_thresh, border_remove=4,
                  cuda=False):
         self.name = 'SuperPoint'
         self.cuda = cuda
@@ -49,7 +49,7 @@ class SuperPointFrontend(object):
             self.net = self.net.cuda()
         else:
             # Train on GPU, deploy on CPU.
-            self.net = torch.load(weights_path,map_location='cpu')
+            self.net = torch.load(weights_path, map_location='cpu')
             # self.net.load_state_dict(torch.load(weights_path,
             #                                    map_location=lambda storage, loc: storage))
         self.net.eval()
@@ -165,11 +165,12 @@ class SuperPointFrontend(object):
         inds = np.argsort(pts[2, :])
         pts = pts[:, inds[::-1]]  # Sort by confidence.
         # Remove points along border.
-        bord = self.border_remove
-        toremoveW = np.logical_or(pts[0, :] < bord, pts[0, :] >= (W - bord))
-        toremoveH = np.logical_or(pts[1, :] < bord, pts[1, :] >= (H - bord))
-        toremove = np.logical_or(toremoveW, toremoveH)
-        pts = pts[:, ~toremove]
+        if self.border_remove != 0:
+            bord = self.border_remove
+            toremoveW = np.logical_or(pts[0, :] < bord, pts[0, :] >= (W - bord))
+            toremoveH = np.logical_or(pts[1, :] < bord, pts[1, :] >= (H - bord))
+            toremove = np.logical_or(toremoveW, toremoveH)
+            pts = pts[:, ~toremove]
         # --- Process descriptor.
         # D = coarse_desc.shape[1]
         # if pts.shape[1] == 0:

@@ -43,6 +43,8 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 * 迅速的过拟合是否表明需要给网络做正则化？
 * 奇怪的现象，即便test_loss变大了，但是precision和recall竟然也变大
 * 记录multiprocess的用法
+* 理顺precision和recall在边界上的计算方式
+* 计算pr曲线的时候要不要加上nms
 
 ## 坑
 直接将(H,W)reshape成(Hc,Wc,64)和先将(H,W)reshape成(Hc,8,Wc,8)然后transpose成(Hc,Wc,8,8)再reshape成(Hc,Wc,64)是不一样的结果
@@ -64,3 +66,4 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 作者预训练的SuperPoint模型，可以调用到图片、视频和摄像头上，但作者明确说明不会开放训练代码、合成数据集
 * [demoasd](https://www.youtube.com/watch?v=gtzxuET74Mk) ,youtube上的视频Demo，在高分辨率的情况下似乎有很大的问题
 * [关于损失函数](https://zhuanlan.zhihu.com/p/54969632)
+* [map计算方法](https://www.jianshu.com/p/82be426f776e)

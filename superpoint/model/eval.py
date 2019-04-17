@@ -18,7 +18,8 @@ from tensorboardX import SummaryWriter
 # epoch 72 ===> p 0.7959 r 0.789
 # epoch 74 ===> p 0.7981 r 0.7869
 # epoch 80 ===> p 0.7995 r 0.7865
-
+# epoch 95 ===> p 0.8039 r 0.7901 *
+# epoch 120 ===> p 0.8071 r 0.7923
 # numworker=1 144s
 # numworker=2 105s
 
@@ -37,13 +38,21 @@ def eval(name, start, end):
         pred_pts_and_conf, heatmap = fe.run(img)
         pred_pts = pred_pts_and_conf[[1, 0], :].T
         pred_label = point2label(pred_pts, binary=True)
-        if not np.sum(pred_label == 1) or not np.sum(ground_truth_label == 1):
-            if np.sum(pred_label == 1) == np.sum(ground_truth_label == 1):
+
+        pred_positive_num = np.sum(pred_label)
+        positive_num = np.sum(ground_truth_label)
+
+        if not pred_positive_num or not positive_num:  # equal zero
+            if pred_positive_num == positive_num:
                 precision_sum += 1
                 recall_sum += 1
-            else:
-                precision_sum += 0
+            elif pred_positive_num == 0:
+                precision_sum += 1
                 recall_sum += 0
+            elif positive_num == 0:
+                precision_sum += 0
+                recall_sum += 1
+
         else:
             precision_sum += np.sum(np.logical_and(pred_label, ground_truth_label)) / np.sum(pred_label == 1)
             recall_sum += np.sum(
@@ -56,7 +65,7 @@ def eval(name, start, end):
 
 if __name__ == '__main__':
 
-    to_eval = range(0, 93)
+    to_eval = range(0, 133)
     writer = SummaryWriter(log_dir="./eval")
     num_worker = 1
 
@@ -96,7 +105,7 @@ if __name__ == '__main__':
         print(f"avg_precision:{avg_precision:.4f}")
         print(f"avg_recall:{avg_recall:.4f}")
         print(f"{timedelta} seconds")
-        writer.add_scalar("eval/precision", avg_precision, model_i)
-        writer.add_scalar("eval/recall", avg_recall, model_i)
+        writer.add_scalar("eval2/precision", avg_precision, model_i)
+        writer.add_scalar("eval2/recall", avg_recall, model_i)
 
     writer.close()

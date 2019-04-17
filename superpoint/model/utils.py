@@ -9,7 +9,8 @@ Hc = Config.Hc
 Wc = Config.Wc
 
 
-def output2points(output, alpha=0.001):
+def output2points(output, heatmap=False, alpha=0.001):
+    output = output.squeeze()
     output = np.exp(output.detach().numpy())  # Softmax.
     output = output / (np.sum(output, axis=0) + .00001)  # Should sum to 1.
     output = output[:-1, :, :]
@@ -26,7 +27,10 @@ def output2points(output, alpha=0.001):
     # print(f'there are {len(points)} points')
     # print(f"max output value is {np.max(output)}")
     # print(f"min output value is {np.min(output)}")
-    return points
+    if heatmap:
+        return output, points
+    else:
+        return points
 
 
 class SuperPointFrontend(object):

@@ -10,5 +10,7 @@ superpoint/runs/
 superpoint/model/.ipynb_checkpoints/
 superpoint/model/__pycache__/*
 superpoint/result
-superpoint/ipy_notebook/*
+superpoint/ipy_notebook/.ipynb_checkpoints/*
+superpoint/ipy_notebook/pr_curve.npy
+superpoint/ipy_notebook/precision_pts.npy
 superpoint/model/eval

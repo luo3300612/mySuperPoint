@@ -65,7 +65,7 @@ def eval(name, start, end):
 
 if __name__ == '__main__':
 
-    to_eval = range(0, 133)
+    to_eval = range(108, 133)
     writer = SummaryWriter(log_dir="./eval")
     num_worker = 1
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         print('Parent process %s.' % os.getpid())
 
         fe = SuperPointFrontend(
-            weights_path=f'/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/result/epoch{model_i+1}',
+            weights_path=f'/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/result/epoch{model_i + 1}',
             nms_dist=4,
             conf_thresh=1 / 65,
             border_remove=0)
@@ -105,7 +105,8 @@ if __name__ == '__main__':
         print(f"avg_precision:{avg_precision:.4f}")
         print(f"avg_recall:{avg_recall:.4f}")
         print(f"{timedelta} seconds")
-        writer.add_scalar("eval2/precision", avg_precision, model_i)
-        writer.add_scalar("eval2/recall", avg_recall, model_i)
+        writer.add_scalar("eval3/precision", avg_precision, model_i)
+        writer.add_scalar("eval3/recall", avg_recall, model_i)
+        writer.add_scalar("eval3/f1", 2 * (avg_recall * avg_precision) / (avg_recall + avg_precision), model_i)
 
     writer.close()

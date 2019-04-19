@@ -6,7 +6,7 @@ import numpy as np
 from dataset import point2label
 from tqdm import tqdm
 from tensorboardX import SummaryWriter
-
+import random
 
 def get_heatmap(sample):
     img = sample['img']
@@ -41,7 +41,7 @@ def mAP_final(test_sample):
         label_mask = label.copy()
 
         index_map = np.zeros_like(label)
-        # check index map code
+        # check index map coderandom.randint(0, 4500, (1000,))
         #         x = 0
         #         y = 0
         for point in pts:
@@ -123,12 +123,12 @@ def mAP_final(test_sample):
 
 
 if __name__ == '__main__':
-    eval_range = range(11, 174)
+    eval_range = range(1, 174)
 
-    writer = SummaryWriter(log_dir="./eval")
+    writer = SummaryWriter()
 
     test_data = get_test({"SyntheticData": {"only_point": True}}, loader=False)
-    sample_index = np.random.randint(0, 4500, (1000,))
+    sample_index = random.sample(range(4500),1000)
     test_sample = [test_data[i] for i in sample_index]
 
     for i in tqdm(eval_range):

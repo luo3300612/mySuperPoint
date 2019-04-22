@@ -48,17 +48,34 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 
 ## 坑
 直接将(H,W)reshape成(Hc,Wc,64)和先将(H,W)reshape成(Hc,8,Wc,8)然后transpose成(Hc,Wc,8,8)再reshape成(Hc,Wc,64)是不一样的结果
+
 对比训练过程发现，我的实现永远在Loss降到0.28左右的时候不再下降，可能是因为？
     * 学习率
     * bn
     * 奇怪的nms
     * homogra????
+    
 预测出的x,y是反的
+
+论文上的各项都给的很明确了，由于没有仔细看复现的时候踩了不少坑，其中包括
+* 使用Adam及其默认参数
+* MagicPoint的数据集是on the fly生成的，每个生成的图片会被homographic wrap来进行augmentation，保证没有样本出现过两次
+* 提到了使用BatchNormalization
+* 给了参数Nh=100
+* 包括随机高斯噪声、motion blur，brightness level changes来提高模型的robustness
+* 训练的一些参数
+
 ## log
 更改point2label写法，提高了一倍的速度
+
 加上了batch normalization，loss可以降低到0.16左右
+
 加上learning_rate decay，loss可以降到0.13左右
+
 换上Adam，learning rate = 0.001，loss可以降到0.0几了，预测也正确了
+
+## 未解决
+我没有使用homographic wrap来进行训练
 
 ## Reference
 * [Superpoint](https://github.com/rpautrat/SuperPoint)，基于tensorflow的SuperPoint

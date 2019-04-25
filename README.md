@@ -84,3 +84,4 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 * [demoasd](https://www.youtube.com/watch?v=gtzxuET74Mk) ,youtube上的视频Demo，在高分辨率的情况下似乎有很大的问题
 * [关于损失函数](https://zhuanlan.zhihu.com/p/54969632)
 * [map计算方法](https://www.jianshu.com/p/82be426f776e)
+* [pytorch geometry](https://torchgeometry.readthedocs.io/en/latest/warp_perspective.html)

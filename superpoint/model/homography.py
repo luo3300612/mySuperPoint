@@ -101,10 +101,10 @@ def wrap_shape(pts, height=480, width=640):
     return pts
 
 
-def sample_homograpy(shape, perspective=True, scaling=True, rotation=True, translation=True,
-                     max_sample=5, scaling_amplitude=0.1, perspective_amplitude_x=0.1,
-                     perspective_amplitude_y=0.1, patch_ratio=0.5, max_angle=np.pi / 2,
-                     allow_artifacts=False, translation_overflow=0):
+def sample_homography(shape, perspective=True, scaling=True, rotation=True, translation=True,
+                      max_sample=5, scaling_amplitude=0.1, perspective_amplitude_x=0.1,
+                      perspective_amplitude_y=0.1, patch_ratio=0.5, max_angle=np.pi / 2,
+                      allow_artifacts=False, translation_overflow=0):
     pts = np.array([[0, 0], [0, 1], [1, 1], [1, 0]])
 
     # center crop
@@ -183,7 +183,7 @@ def sample_homograpy(shape, perspective=True, scaling=True, rotation=True, trans
         pts2[:, 0] += x
         pts2[:, 1] += y
 
-    pts = wrap_shape(pts, *shape[:2])
+    pts = wrap_shape(pts, int(shape[0] * patch_ratio), int(shape[1] * patch_ratio))
     pts2 = wrap_shape(pts2, *shape[:2])
     h, status = cv2.findHomography(pts2, pts)
     return h
@@ -210,13 +210,13 @@ def get_heatmap(net, img, cell=8):
     return heatmap
 
 
-def homographic_adaptation(net, img, Nh):
+def homographic_adaptation(net, img, Nh, **config):
     sum_heatmap = get_heatmap(net, img)
     count = np.ones(img.shape)
     shape = img.shape
     patch_ratio = 0.5
     for i in range(1, Nh):
-        H = sample_homograpy(shape, patch_ratio=patch_ratio)
+        H = sample_homography(shape, patch_ratio=patch_ratio, **config)
         h_img = cv2.warpPerspective(img, H, (
             int(shape[1] * patch_ratio), int(shape[0] * patch_ratio)))  # TODO figure out size to warp
         heatmap = get_heatmap(net, h_img)
@@ -233,20 +233,11 @@ if __name__ == '__main__':
                      map_location='cpu')
     img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551710.jpg', 0)
 
-    Nh = 1
-
+    Nh = 100
+    # config = {"allow_artifacts": True, "translation_overflow": 0.2}
     heatmap = homographic_adaptation(net, img, Nh)
-    pts = heatmap2points(heatmap,border_remove=4)
+    pts = heatmap2points(heatmap, border_remove=0)
 
-    pts_x = pts[0,:]
-    pts_y = pts[1,:]
-    plt.imshow(img,cmap='gray')
-    plt.scatter(pts_x,pts_y,s=5,color='red')
-    plt.axis('off')
-    plt.show()
-
-    heatmap = homographic_adaptation(net, img, 10)
-    pts = heatmap2points(heatmap, border_remove=4)
     pts_x = pts[0, :]
     pts_y = pts[1, :]
     plt.imshow(img, cmap='gray')
@@ -254,13 +245,20 @@ if __name__ == '__main__':
     plt.axis('off')
     plt.show()
 
-    heatmap = homographic_adaptation(net, img, 100)
-    pts = heatmap2points(heatmap, border_remove=4)
-    pts_x = pts[0, :]
-    pts_y = pts[1, :]
-    plt.imshow(img, cmap='gray')
-    plt.scatter(pts_x, pts_y, s=5, color='red')
-    plt.axis('off')
-    plt.show()
-
-
+    # heatmap = homographic_adaptation(net, img, 10)
+    # pts = heatmap2points(heatmap, border_remove=4)
+    # pts_x = pts[0, :]
+    # pts_y = pts[1, :]
+    # plt.imshow(img, cmap='gray')
+    # plt.scatter(pts_x, pts_y, s=5, color='red')
+    # plt.axis('off')
+    # plt.show()
+    #
+    # heatmap = homographic_adaptation(net, img, 100)
+    # pts = heatmap2points(heatmap, border_remove=4)
+    # pts_x = pts[0, :]
+    # pts_y = pts[1, :]
+    # plt.imshow(img, cmap='gray')
+    # plt.scatter(pts_x, pts_y, s=5, color='red')
+    # plt.axis('off')
+    # plt.show()

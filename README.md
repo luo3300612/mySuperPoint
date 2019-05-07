@@ -77,6 +77,9 @@ SyntheticShape的__init__方法会合并类自带的default_config和config['dat
 ## 未解决
 我没有使用homographic wrap来进行训练
 
+## Homography在opencv的格式
+[0,0],[1,0],[1,1],[0,1]
+
 ## Reference
 * [Superpoint](https://github.com/rpautrat/SuperPoint)，基于tensorflow的SuperPoint
 * [SuperpointPretrainedNetwork](https://github.com/MagicLeapResearch/SuperPointPretrainedNetwork)，

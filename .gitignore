@@ -14,3 +14,4 @@ superpoint/ipy_notebook/.ipynb_checkpoints/*
 superpoint/ipy_notebook/pr_curve.npy
 superpoint/ipy_notebook/precision_pts.npy
 superpoint/model/eval
+superpoint/model/homography_result

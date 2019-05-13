@@ -191,7 +191,12 @@ def sample_homography(shape, perspective=True, scaling=True, rotation=True, tran
 
 def get_heatmap(net, img, cell=8):
     img_tensor = torch.tensor(img)
-    img_tensor = img_tensor.view((1, 1, *img.shape)).float()
+
+    if len(img_tensor.shape) == 2:
+        img_tensor = img_tensor.view((1, 1, *img.shape)).float()
+    elif len(img_tensor.shape) == 3:
+        img_tensor = img_tensor.view((1, *img.shape)).float()
+    # print(img_tensor/255)
     output = net(img_tensor)
     output = output.data.cpu().numpy().squeeze()
     # --- Process points.
@@ -231,19 +236,27 @@ def homographic_adaptation(net, img, Nh, **config):
 if __name__ == '__main__':
     net = torch.load('/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/result/epoch120',
                      map_location='cpu')
-    img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551710.jpg', 0)
+    img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551710.jpg',0)
+
 
     Nh = 100
+    top_k = 300
     # config = {"allow_artifacts": True, "translation_overflow": 0.2}
     heatmap = homographic_adaptation(net, img, Nh)
     pts = heatmap2points(heatmap, border_remove=0)
+    if top_k != 0:
+        pts = pts[:,pts[2,:].argsort()[::-1]]
+        pts_x = pts[0, 0:top_k]
+        pts_y = pts[1, 0:top_k]
+    else:
+        pts_x = pts[0, :]
+        pts_y = pts[1, :]
+    out = (np.dstack((img, img, img))).astype('uint8')
+    for i in range(len(pts_x)):
+        cv2.circle(out, (int(pts_x[i]),int(pts_y[i])), 1, (0, 255, 0), -1, lineType=16)
 
-    pts_x = pts[0, :]
-    pts_y = pts[1, :]
-    plt.imshow(img, cmap='gray')
-    plt.scatter(pts_x, pts_y, s=5, color='red')
-    plt.axis('off')
-    plt.show()
+    cv2.imshow("Window",out)
+    cv2.waitKey(0)
 
     # heatmap = homographic_adaptation(net, img, 10)
     # pts = heatmap2points(heatmap, border_remove=4)

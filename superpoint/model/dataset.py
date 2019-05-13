@@ -5,7 +5,14 @@ from torch.utils.data import Dataset
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-from config import Config
+import sys
+from PIL import Image
+
+
+
+sys.path.append('/home/luo3300612/Workspace/PycharmWS/mySuperPoint')
+
+from superpoint.model.config import Config
 
 dataset_root = Config.dataset_root
 
@@ -95,6 +102,23 @@ class SyntheticData(Dataset):
         else:
             sample = {'img': img, 'label': point2label(pt)}
         return sample
+
+
+class COCO(Dataset):
+    def __init__(self, dataset_root, transform=None):
+        self.dataset_root = dataset_root
+        self.imgs = os.listdir(dataset_root)
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.imgs)
+
+    def __getitem__(self, idx):
+        img = Image.open(os.path.join(self.dataset_root, self.imgs[idx]))
+        if self.transform:
+            return self.transform(img)
+        else:
+            return img
 
 
 def point2label(pts, binary=False):

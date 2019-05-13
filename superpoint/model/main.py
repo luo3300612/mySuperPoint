@@ -15,6 +15,7 @@ from tensorboardX import SummaryWriter
 from log import Logger
 from utils import output2points
 import argparse
+import sys
 
 log = Logger('train.log', level='debug')
 writer = SummaryWriter()
@@ -96,6 +97,7 @@ if __name__ == '__main__':
     # load data
     log.logger.info("loading data...")
     train_data = SyntheticData(train_csv, dataset_root)
+
     train_loader = DataLoader(train_data,
                               batch_size=batch_size,
                               shuffle=True,

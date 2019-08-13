@@ -1,20 +1,12 @@
+from torch.utils.data import DataLoader
 import os
 import tqdm
 import pandas as pd
 from torch.utils.data import Dataset
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 import sys
 from PIL import Image
-
-
-
-sys.path.append('/home/luo3300612/Workspace/PycharmWS/mySuperPoint')
-
-from superpoint.model.config import Config
-
-dataset_root = Config.dataset_root
 
 first_dir_names = ['draw_checkerboard',
                    'draw_cube',
@@ -31,13 +23,37 @@ second_pts_dir_name = 'points'
 
 dataset_dir_name = {'train': 'training', 'test': 'test', 'val': 'validation'}
 
-H = Config.H
-W = Config.W
-Hc = Config.Hc
-Wc = Config.Wc
+
+def get_loader(opt, mode, logger):
+    if mode == 'train':
+        train_data = SyntheticData(opt, opt['train-info'], opt['img-path'])
+        train_loader = DataLoader(train_data,
+                                  batch_size=opt['batch_size'],
+                                  shuffle=True,
+                                  num_workers=opt['num_workers'])
+        logger.speak('{} data:{}'.format(mode, len(train_data)))
+        return train_loader
+    elif mode == 'val':
+        val_data = SyntheticData(opt, opt['val-info'], opt['img-path'])
+        val_loader = DataLoader(val_data,
+                                batch_size=opt['batch_size'],
+                                shuffle=True,
+                                num_workers=opt['num_workers'])
+        logger.speak('{} data:{}'.format(mode, len(val_data)))
+        return val_loader
+    elif mode == 'test':
+        test_data = SyntheticData(opt, opt['test-info'], opt['img-path'])
+        test_loader = DataLoader(test_data,
+                                 batch_size=opt['batch_size'],
+                                 shuffle=False,
+                                 num_workers=opt['num_workers'])
+        logger.speak('{} data:{}'.format(mode, len(test_data)))
+        return test_loader
+    else:
+        raise NotImplementedError
 
 
-def gen_csv():
+def gen_csv(opt):
     for value in dataset_dir_name.values():
         print(f'生成{value}.csv')
         df = pd.DataFrame(columns=['imgs_path', 'pts_path'])
@@ -45,7 +61,7 @@ def gen_csv():
             imgs_prefix = os.path.join(first_dir_name,
                                        second_images_dir_name,
                                        value)
-            for _, _, imgs in os.walk(os.path.join(dataset_root,
+            for _, _, imgs in os.walk(os.path.join(opt['img-path'],
                                                    first_dir_name,
                                                    second_images_dir_name,
                                                    value)):
@@ -56,7 +72,7 @@ def gen_csv():
             pts_prefix = os.path.join(first_dir_name,
                                       second_pts_dir_name,
                                       value)
-            for _, _, pts in os.walk(os.path.join(dataset_root,
+            for _, _, pts in os.walk(os.path.join(opt['img-path'],
                                                   first_dir_name,
                                                   second_pts_dir_name,
                                                   value)):
@@ -80,11 +96,14 @@ def gen_csv():
 
 
 class SyntheticData(Dataset):
-    def __init__(self, csv_file, dataset_root, save_point=False, only_point=False):
+    def __init__(self, opt, csv_file, dataset_root, save_point=False, only_point=False):
         self.csv = pd.read_csv(csv_file)
         self.dataset_root = dataset_root
         self.save_point = save_point
         self.only_point = only_point
+        self.H = opt['H']
+        self.W = opt['W']
+        self.cell = opt['cell']
 
     def __len__(self):
         return len(self.csv)
@@ -98,30 +117,15 @@ class SyntheticData(Dataset):
         if self.only_point:
             sample = {'img': img, 'pt': pt}
         elif self.save_point:
-            sample = {'img': img, 'label': point2label(pt), 'pt': pt}
+            sample = {'img': img, 'label': point2label(pt, self.H, self.W, self.cell), 'pt': pt}
         else:
-            sample = {'img': img, 'label': point2label(pt)}
+            sample = {'img': img, 'label': point2label(pt, self.H, self.W, self.cell)}
         return sample
 
 
-class COCO(Dataset):
-    def __init__(self, dataset_root, transform=None):
-        self.dataset_root = dataset_root
-        self.imgs = os.listdir(dataset_root)
-        self.transform = transform
-
-    def __len__(self):
-        return len(self.imgs)
-
-    def __getitem__(self, idx):
-        img = Image.open(os.path.join(self.dataset_root, self.imgs[idx]))
-        if self.transform:
-            return self.transform(img)
-        else:
-            return img
-
-
-def point2label(pts, binary=False):
+def point2label(pts, H, W, cell, binary=False):
+    Hc = H / cell
+    Wc = W / cell
     label = np.zeros((H, W), dtype=int)
     pts = pts.astype(int)
     #     print(pts)
@@ -137,7 +141,7 @@ def point2label(pts, binary=False):
     return label
 
 
-def label2point(label):
+def label2point(label, Hc, Wc):
     ret = []
     for i in range(Hc):
         for j in range(Wc):

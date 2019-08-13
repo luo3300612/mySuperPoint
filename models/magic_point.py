@@ -10,11 +10,11 @@ import numpy as np
 import random
 
 
-class SuperPointNet(torch.nn.Module):
+class MagicPoint(torch.nn.Module):
     """ Pytorch definition of SuperPoint Network. """
 
     def __init__(self):
-        super(SuperPointNet, self).__init__()
+        super(MagicPoint, self).__init__()
         self.relu = torch.nn.ReLU(inplace=True)
         self.pool = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         c1, c2, c3, c4, c5, d1 = 64, 64, 128, 128, 256, 256

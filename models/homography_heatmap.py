@@ -1,4 +1,4 @@
-from superpoint.model.homography import sample_homography as sample_homography
+from models.homography import sample_homography as sample_homography
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt

@@ -236,11 +236,14 @@ def homographic_adaptation(net, img, Nh, **config):
 if __name__ == '__main__':
     net = torch.load('/home/luo3300612/Workspace/PycharmWS/mySuperPoint/superpoint/result/epoch120',
                      map_location='cpu')
-    img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551710.jpg',0)
+    # img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551710.jpg',0)
+    # img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551701.jpg', 0)
+    # img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551718.jpg', 0)
+    img = cv2.imread('/run/media/luo3300612/我是D盘~ o(*￣▽￣*)ブ/下载/迅雷下载/coco/train2014/COCO_train2014_000000551736.jpg', 0)
+    img = cv2.resize(img,(640,480))
 
-
-    Nh = 100
-    top_k = 300
+    Nh = 1
+    top_k = 0
     # config = {"allow_artifacts": True, "translation_overflow": 0.2}
     heatmap = homographic_adaptation(net, img, Nh)
     pts = heatmap2points(heatmap, border_remove=0)

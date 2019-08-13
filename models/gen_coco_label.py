@@ -1,8 +1,7 @@
 import torch
-from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
-from superpoint.model.dataset import COCO
-from superpoint.model.homography import  homographic_adaptation,heatmap2points
+from models.dataset import COCO
+from models.homography import  homographic_adaptation,heatmap2points
 import matplotlib.pyplot as plt
 import numpy as np
 

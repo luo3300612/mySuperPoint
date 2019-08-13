@@ -1,6 +1,12 @@
 # mySuperPoint
 数据集生成方法是在[Superpoint](https://github.com/rpautrat/SuperPoint)中Synthetic dataset的生成方法
 
+## refactor
+* 预估epoch时间
+* 打印数据集信息
+* 保存最好的model
+* ACC
+
 ## tf版实现笔记
 * 网络结构与pytorch版一样
 

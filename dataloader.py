@@ -26,27 +26,27 @@ dataset_dir_name = {'train': 'training', 'test': 'test', 'val': 'validation'}
 
 def get_loader(opt, mode, logger):
     if mode == 'train':
-        train_data = SyntheticData(opt, opt['train-info'], opt['img-path'])
+        train_data = SyntheticData(opt, opt.train_info, opt.img_path)
         train_loader = DataLoader(train_data,
-                                  batch_size=opt['batch_size'],
+                                  batch_size=opt.batch_size,
                                   shuffle=True,
-                                  num_workers=opt['num_workers'])
+                                  num_workers=opt.num_workers)
         logger.speak('{} data:{}'.format(mode, len(train_data)))
         return train_loader
     elif mode == 'val':
-        val_data = SyntheticData(opt, opt['val-info'], opt['img-path'])
+        val_data = SyntheticData(opt, opt.val_info, opt.img_path)
         val_loader = DataLoader(val_data,
-                                batch_size=opt['batch_size'],
+                                batch_size=opt.batch_size,
                                 shuffle=True,
-                                num_workers=opt['num_workers'])
+                                num_workers=opt.num_workers)
         logger.speak('{} data:{}'.format(mode, len(val_data)))
         return val_loader
     elif mode == 'test':
-        test_data = SyntheticData(opt, opt['test-info'], opt['img-path'])
+        test_data = SyntheticData(opt, opt.test_info, opt.img_path)
         test_loader = DataLoader(test_data,
-                                 batch_size=opt['batch_size'],
+                                 batch_size=opt.batch_size,
                                  shuffle=False,
-                                 num_workers=opt['num_workers'])
+                                 num_workers=opt.num_workers)
         logger.speak('{} data:{}'.format(mode, len(test_data)))
         return test_loader
     else:
@@ -96,14 +96,18 @@ def gen_csv(opt):
 
 
 class SyntheticData(Dataset):
+    default = {
+        'truncate': {'ellipses': 0.3, 'stripes': 0.2, 'gaussian_noise': 0.1}
+    }
+
     def __init__(self, opt, csv_file, dataset_root, save_point=False, only_point=False):
         self.csv = pd.read_csv(csv_file)
         self.dataset_root = dataset_root
         self.save_point = save_point
         self.only_point = only_point
-        self.H = opt['H']
-        self.W = opt['W']
-        self.cell = opt['cell']
+        self.H = opt.H
+        self.W = opt.W
+        self.cell = opt.cell
 
     def __len__(self):
         return len(self.csv)
@@ -124,8 +128,8 @@ class SyntheticData(Dataset):
 
 
 def point2label(pts, H, W, cell, binary=False):
-    Hc = H / cell
-    Wc = W / cell
+    Hc = int(H / cell)
+    Wc = int(W / cell)
     label = np.zeros((H, W), dtype=int)
     pts = pts.astype(int)
     #     print(pts)

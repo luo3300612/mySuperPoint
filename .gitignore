@@ -10,8 +10,6 @@ runs/
 model/.ipynb_checkpoints/
 model/__pycache__/*
 result
-ipy_notebook/.ipynb_checkpoints/*
-ipy_notebook/pr_curve.npy
-ipy_notebook/precision_pts.npy
+notebook/.ipynb_checkpoints/*
 model/eval
 model/homography_result

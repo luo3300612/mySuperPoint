@@ -6,6 +6,8 @@
 * 打印数据集信息
 * 保存最好的model
 * ACC
+* optional truncate ellipse 0.3 strides 0.2 gaussian noise 0.1
+* homo photo augmentation
 
 ## tf版实现笔记
 * 网络结构与pytorch版一样
